@@ -18,7 +18,14 @@ function CustomInput({importPdv}) {
           
           )
          //console.log(selectedFile)
-         importPdv(selectedFile)
+         setSubmitted(true)
+         importPdv(selectedFile).
+         then(res=>{
+            setSubmitted(false)
+         })
+         .catch(err=>{
+
+         })
          
     }
 
@@ -32,12 +39,12 @@ function CustomInput({importPdv}) {
         <div className="input-group">
             <input type="file" className="form-control" id="inputGroupFile04" required
             onChange={(e)=>onFileChange(e)} 
-                   aria-describedby="inputGroupFileAddon04" aria-label="Upload" />
+                   aria-describedby="inputGroupFileAddon04" aria-label="Upload" disabled={submitted}/>
             <button
                 onClick={uploadFile}
                 className="btn btn-secondary" type="button"
                     id="inputGroupFileAddon04">
-                {submitted? <div className="spinner-border spinner-border-sm" role="status">
+                {submitted ? <div className="spinner-border spinner-border-sm" role="status">
                     <span className="visually-hidden">Loading...</span>
                 </div>: "Importer"}
             </button>

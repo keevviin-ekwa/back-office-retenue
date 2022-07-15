@@ -1,10 +1,53 @@
-import React from 'react';
-import DashboardCard from "../components/dashbord-card/dashboard-card-component";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faFileInvoice, faShop, faUser} from "@fortawesome/free-solid-svg-icons";
+import React, {useEffect} from 'react';
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+import { getAllOcmUserAction } from '../store/reducers/ocm-user/ocm-user.actions';
+import DataTable from '../components/Tables/DataTable/DataTable.ui';
+import { selectOcmUsersList } from './../store/reducers/ocm-user/ocm-user.selectors';
 
 
-function UserPage(props) {
+
+function UserPage({getAllOcmUsers,ocmUsers}) {
+
+    useEffect(() => {
+        console.log("UserPage",ocmUsers)
+        setTimeout(() => {
+            getAllOcmUsers()
+        }, 500);
+    
+     
+    }, [])
+    
+    const appHeaders = [
+        {
+            id: "lastName",
+            name: "Nom",
+        },
+        {
+            id: "username",
+            name: "CUID" 
+        },
+        {
+            id: "email",
+            name: "Email"
+        },
+       
+    ]; 
+
+    const actions = [
+    {
+        isVisible: (item) => true,
+        label: "Editer",
+        action: (e, item) => { e.preventDefault(); console.log(item) }
+    },
+    {
+        isVisible: (item) => true,
+        label: "Supprimer",
+        action: (e, item) => { e.preventDefault(); console.log(item) },
+    },
+    
+    ]; 
+
     return (
         <div>
             <div
@@ -27,7 +70,11 @@ function UserPage(props) {
 
             <div className="row mt-5 mb-5">
                 <div className="col-md-12 card">
-                    {/*<DataTables/>*/}
+                    <DataTable
+                       data={ocmUsers}
+                        headers={appHeaders}
+                        actions={actions}
+                    />
                 </div>
 
 
@@ -37,4 +84,13 @@ function UserPage(props) {
     );
 }
 
-export default UserPage;
+
+const mapStateToProps = createStructuredSelector({
+     ocmUsers: selectOcmUsersList,
+    });
+    
+    const mapDispatchToProps = (dispatch) => ({
+     getAllOcmUsers: ()=>dispatch(getAllOcmUserAction()),
+    });
+    
+    export default connect(mapStateToProps, mapDispatchToProps)(UserPage);

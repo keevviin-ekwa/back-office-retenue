@@ -14,5 +14,5 @@ export const selectPdvErrors = createSelector(
 
 export const selectPdvResponses = createSelector(
     [selectPdvs],
-    (pdv) => pdv.response?.data
+    (pdv) => pdv.response
 );

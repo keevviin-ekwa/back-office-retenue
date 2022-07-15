@@ -36,10 +36,10 @@ export const errorAction = (error) => ({
 });
 
 
-export const getAllPdvAction = () => (dispatch) => {
+export const getAllPdvAction = (maxPerPage, offset) => (dispatch) => {
     dispatch(loadingAction());
     return new Promise((resolve, reject) => {
-        API.get(`https://localhost:5001/api/User/getAllUser?PageNumber=1&PageSize=10`)
+        API.get(`https://localhost:5001/api/User/getAllUser?PageNumber=${offset}&PageSize=${maxPerPage}`)
         .then((res) => {
          
             dispatch(loadingAction);
@@ -62,13 +62,14 @@ export const addPdvAction = (pdv) => (dispatch) => {
   
         API.post("https://localhost:5001/api/User/createUser",pdv)
         .then((res) => {
-         
-           
+        
             if(res.status==200){
                 toast.success(res.data)
+                dispatch(addPdvResponseAction(res))
             }
             else if(res.status==400 && res.data.errors==null){
                  toast.error(res.data)
+                 dispatch(addPdvResponseAction(res))
             }
             else{
                 dispatch(addPdvResponseAction(res))
@@ -93,15 +94,26 @@ export const importPdvAction = (_file) => (dispatch) => {
         "file",_file
     )
     return new Promise((resolve, reject) => {
-        API.post("https://localhost:5001/api/User/import-user",_file)
+        API.post("https://localhost:5001/api/User/import-user",formData)
         .then((res) => {
-            dispatch(loadingAction);
-           console.log(res)
+          
+            if(res.status===200){
+                toast.success(res.data)
+                dispatch(addPdvResponseAction(res))
+            }
+            else if(res.status===400 && res.data.errors===null){
+                 toast.error(res.data)
+                 dispatch(addPdvResponseAction(res))
+            }
+            else{
+                dispatch(addPdvResponseAction(res))
+            }
+
             resolve(res);
         }).catch((error) => {
             console.log("error"+ error);
-            dispatch(loadingAction);
-            dispatch(errorAction(error.message));
+            // dispatch(loadingAction);
+            // dispatch(errorAction(error.message));
             toast.error(error.message);
             reject(error);
         });

@@ -1,28 +1,28 @@
 import React,{useEffect, useState} from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { deleteSignatureAction, getAllSignaturesAction, updateSignatureAction } from '../store/reducers/Signature/signature.actions';
+import { addSignatureAction, deleteSignatureAction, getAllSignaturesAction, updateSignatureAction } from '../store/reducers/Signature/signature.actions';
 import { selectUserRoles } from '../store/reducers/user/user.selectors';
-import { selectAllSignatures } from './../store/reducers/Signature/signature.selectors';
+import { selectAllSignatures, selectResponseStatus, selectUserSignatures } from './../store/reducers/Signature/signature.selectors';
 import { selectUserKeycloak } from './../store/reducers/user/user.selectors';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faTrashCan, faAdd, faPenToSquare} from "@fortawesome/free-solid-svg-icons";
+import { addSignature } from './../store/reducers/Signature/signature.actions';
 
-function ConfigurationPage({getAllSignatures, allSignatures,userRole,user,deleteSignature,updateSignature}) {
+function ConfigurationPage({addSignature,status, getAllSignatures,allSignatures,userRole,user,deleteSignature,updateSignature,userSignature}) {
         const [signatureExists, setSignatureExists] = useState(false)
         const [signatures,SetSignature]= useState(allSignatures)
         const [selectedFile,setSelectedFile]= useState(null)
-
+        const [selectStatus,setSelectStatus]= useState(0)
+        
+    
     useEffect(() => {
-      
-        console.log("signatures",allSignatures)
-        
-        
+        //console.log("actf",userSignature)
         checkUserSignature()
-        
         checkSignature()
+       
       
-    }, [allSignatures])
+    },)
 
     const checkSignature = () => {
        if( signatures.length===1){
@@ -35,8 +35,17 @@ function ConfigurationPage({getAllSignatures, allSignatures,userRole,user,delete
     }
 
      const handleClick = (id) => {
-        console.log(id)
-        deleteSignature(id);
+        deleteSignature(id)
+        .then(res=>{
+            if(res.status === 200){
+                const del= signatures.filter(sig => sig.id !==id)
+               // SetSignature(del)
+                setSignatureExists(false)
+            }
+        }).catch(err=>{
+
+        });
+        
      }
 
     const checkUserSignature= () => {
@@ -58,20 +67,37 @@ function ConfigurationPage({getAllSignatures, allSignatures,userRole,user,delete
 
 
     
-    function  uploadFile(id){
+    function  updateFile(id){
         const formData = new FormData();
-       
-
         formData.append( 
             "file", 
-           selectedFile,
-          
-          )
+           selectedFile,)
           console.log("formData", id);
           updateSignature(id,formData);
          
          
     }
+
+    function  upLoadFile(id){
+        const formData = new FormData();
+       
+        formData.append( 
+            "file", 
+           selectedFile, )
+         console.log("add")
+         addSignature(formData)
+         .then(res=>{
+            if(res.status ===200){
+               
+            }
+         });
+         
+         setSelectStatus(status)
+         
+         
+    }
+
+
     
         
     return (
@@ -84,11 +110,26 @@ function ConfigurationPage({getAllSignatures, allSignatures,userRole,user,delete
 
             <div className="d-flex justify-content-between">
                 {
-                  userRole[0]==="ADMINISTRATEUR" || signatureExists ?"": <button type="button" className="btn btn-primary ">
-                  <div><FontAwesomeIcon icon={faAdd}/></div> <div className="mx-2">Ajouter une signature</div> 
+                  userRole[0]==="ADMINISTRATEUR" || signatureExists ?"": 
+                  <div className="d-flex">
+                    
+                        <input
+                        
+                         onChange={(e)=>onFileChange(e)} 
+                       // value="Uploader votre signature"
+                         className="form-control" type="file" id="formFile"/>
+                  <button 
+                  onClick={upLoadFile}
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapse-2" aria-expanded="false" aria-controls="collapse-2"
+                  type="button" 
+                  className="btn btn-primary ">
+                  <div><FontAwesomeIcon icon={faAdd}/></div> <div className="mx-2">Ajouter</div> 
               </button>
+              </div>
                 
                 }
+               
             </div>
 
             <div className="row mt-5 mb-5">
@@ -121,21 +162,21 @@ function ConfigurationPage({getAllSignatures, allSignatures,userRole,user,delete
                                          className="btn btn-icon btn-sm btn-primary mx-1"  
                                          type="button"><FontAwesomeIcon icon={faPenToSquare}/></button>
 
-                                                        <div class="modal fade" id={item.userCuid} data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                                                            <div class="modal-dialog">
-                                                                <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"><span class="visually-hidden">Close</span></button>
+                                                        <div className="modal fade" id={item.userCuid} data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                                            <div className="modal-dialog">
+                                                                <div className="modal-content">
+                                                                <div className="modal-header">
+                                                                    <button type="button" className="btn-close" data-bs-dismiss="modal"><span className="visually-hidden">Close</span></button>
                                                                 </div>
-                                                                <div class="modal-body">
-                                                                <div class="mb-3 row">
-                                                                    <label for="staticUser" class="col-sm-2 col-form-label">CUID</label>
-                                                                    <div class="col-sm-10">
-                                                                    <input type="text" readOnly class="form-control" id="staticUser" value={item.userCuid} />
+                                                                <div className="modal-body">
+                                                                <div className="mb-3 row">
+                                                                    <label for="staticUser" className="col-sm-2 col-form-label">CUID</label>
+                                                                    <div className="col-sm-10">
+                                                                    <input type="text" readOnly className="form-control" id="staticUser" value={item.userCuid} />
                                                                 </div>
                                                                 </div>
-                                                                <div class="mb-3 row">
-                                                                <label for="staticUser" class="col-sm-2 col-form-label"></label>  
+                                                                <div className="mb-3 row">
+                                                                <label for="staticUser" className="col-sm-2 col-form-label"></label>  
                                                                     <div className="col-sm-10">
                                                                         <input 
                                                                         
@@ -145,23 +186,23 @@ function ConfigurationPage({getAllSignatures, allSignatures,userRole,user,delete
                                                                          id="formFile"/>
                                                                     </div>
                                                                 </div>
-                                                                <div class="mb-3  row ">
-                                                                <label for="staticUser" class="col-sm-2 col-form-label"></label>
+                                                                <div className="mb-3  row ">
+                                                                <label for="staticUser" className="col-sm-2 col-form-label"></label>
                                                                  <div className="col-sm-10 d-flex justify-content-start" ><img src={item.signaturePath} alt="image" className=''/></div>
                                                                 </div>
                                                                 
                                                                 
                                                                 </div>
-                                                                <div class="modal-footer">
+                                                                <div className="modal-footer">
                                                                     <button 
                                                                        
                                                                        type="button" 
-                                                                       class="btn btn-secondary" 
+                                                                       className="btn btn-secondary" 
                                                                        data-bs-dismiss="modal">Annuler</button>
                                                                     <button
-                                                                     onClick={(id)=>uploadFile(item.id)} 
+                                                                     onClick={(id)=>updateFile(item.id)} 
                                                                      type="button" 
-                                                                     class="btn btn-primary">Modifier</button>
+                                                                     className="btn btn-primary">Modifier</button>
                                                                 </div>
                                                                 </div>
                                                             </div>
@@ -200,12 +241,16 @@ function ConfigurationPage({getAllSignatures, allSignatures,userRole,user,delete
 const mapStateToProps = createStructuredSelector({
         allSignatures: selectAllSignatures,
         userRole: selectUserRoles,
-        user: selectUserKeycloak
+        user: selectUserKeycloak,
+        status: selectResponseStatus,
+        userSignature: selectUserSignatures,
     });
     
     const mapDispatchToProps = (dispatch) => ({
       deleteSignature: (id) => dispatch(deleteSignatureAction(id)),
-      updateSignature: (id,signature) => dispatch(updateSignatureAction(id,signature))
+      updateSignature: (id,signature) => dispatch(updateSignatureAction(id,signature)),
+      addSignature: (signature) => dispatch(addSignatureAction(signature)),
+      getAllSignatures: () => dispatch(getAllSignaturesAction())
     });
     
     export default connect(mapStateToProps, mapDispatchToProps)(ConfigurationPage);

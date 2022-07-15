@@ -1,10 +1,11 @@
 import './App.css';
-import HomePage from './pages/homepage';
+
 import { connect } from 'react-redux';
 import { requestAuthenticationAsync } from "./store/reducers/user/user.actions";
 import { createStructuredSelector } from 'reselect';
 import { selectUserKeycloak,selectUserAuthentication } from './store/reducers/user/user.selectors';
 import { useEffect } from 'react';
+import Dashboard from './pages/Dashboard/dashboard-component';
 
 
 function App({authenticated,requestAuthenticationAsync}) {
@@ -15,7 +16,7 @@ function App({authenticated,requestAuthenticationAsync}) {
   return (
     <div className="App">
       {
-        authenticated === true ? <HomePage/> :null
+        authenticated === true ? <Dashboard/> :null
       }
     </div>
   );

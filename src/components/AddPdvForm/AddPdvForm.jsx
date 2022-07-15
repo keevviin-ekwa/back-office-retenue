@@ -5,16 +5,35 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { addPdvAction, addPdvResponseAction, errorAction } from './../../store/reducers/pdv/pdv.actions';
 import { selectPdvErrors, selectPdvResponses } from '../../store/reducers/pdv/pdv.selector';
-import { toast } from 'react-toastify';
+
+
+function AddPdvForm({addPdv,errors,resetResponse,response}) {
 
 
 
-function AddPdvForm({addPdv,errors,resetResponse}) {
+
+
      const [phoneNumber,setPhoneNumber]= useState();
      const [companyName,setCompanyName]= useState("");
      const [regime,setRegime]= useState("SIMPLIFIE");
      const [niu,setNiu]= useState("");
+     const [isOpen, setIsOpen]= useState(false);
+     const [submit, setSubmitted]= useState(false);
 
+     useEffect(() => {
+      //  checkResponseStatus();
+     },)
+
+     const checkResponseStatus = (response) => {
+         if(response.status === 200) {
+            console.log("HELLO")
+            setIsOpen(false);
+         }
+       }
+
+    const hanleOpenClick= () =>{
+        setIsOpen(true)
+    }
      
      
     const handleSubmit =(e) =>{
@@ -25,24 +44,47 @@ function AddPdvForm({addPdv,errors,resetResponse}) {
             "regime": regime,
             "phoneNumber": phoneNumber
           }
+        setSubmitted(true);
+         addPdv(pdv)
+         .then( res=>{
+            checkResponseStatus(res) 
+            if(res.status===200){
+               
+                resetResponse(null)
+                setPhoneNumber()
+                setNiu("")
+                setCompanyName("")
+            }
+            setSubmitted(false)
+         })
+         .catch(err=>{
+
+         })
+
         
-         addPdv(pdv);
          
     }
 
     const handleCLoseClick = (e) => {
-        
+        setIsOpen(false);
         resetResponse(null)
+        setPhoneNumber()
+        setNiu("")
+        setCompanyName("")
     }
    
      
   return (
      <> 
-     <button type="button" className="btn btn-primary d-flex justify-content-between" data-bs-toggle="modal" data-bs-target="#modalForm">
+     <button 
+     onClick={hanleOpenClick}
+     type="button" className="btn btn-primary d-flex justify-content-between" >
      <div><FontAwesomeIcon icon={faAdd}/></div> <div className="mx-2">Ajouter un pdv</div> 
 </button>
 
-<div className="modal fade " id="modalForm" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div className={`${isOpen ? "modal fade show":"modal fade "}`} id="modalForm"
+style={{display: `${isOpen ? "block" : "none"}`}}
+ tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div className="modal-dialog modal-lg modal-dialog-centered">
         <div className="modal-content">
             {/* <div className="modal-header">
@@ -110,8 +152,13 @@ function AddPdvForm({addPdv,errors,resetResponse}) {
                     <div className="modal-footer">
                         <button 
                         
-                        onClick={handleCLoseClick} type="button"  className="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                        <button type="submit" className="btn btn-warning float-end">Enregistrer</button>
+                        onClick={handleCLoseClick} type="button"  className="btn btn-secondary" >Fermer</button>
+                        <button type="submit" className="btn btn-warning float-end">{ submit ? <div class="text-center">
+                            <div class="spinner-border spinner-border-sm" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                            </div>:"Enregistrer"
+                        }</button>
                     </div>
                 </form>
             </div>
@@ -128,7 +175,7 @@ const mapStateToProps = createStructuredSelector({
     //  authenticated: selectUserAuthentication,
     //  currentUser: selectUserKeycloak
      errors: selectPdvErrors,
-    // response: selectPdvResponses
+    response: selectPdvResponses
         
     });
     

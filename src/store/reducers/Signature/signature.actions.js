@@ -3,16 +3,27 @@ import { SignatureTypes } from "./signature.types";
 import { toast } from "react-toastify";
 
 
+
+
 export const modifySignatureAction = (signature) => ({
     type: SignatureTypes.MODIFY_SIGNATURE_ACTION,
     payload: signature
 });
+
+export const addAction= (signature)=> ({
+type: SignatureTypes.ADD_SIGNATURE_ACTION,
+payload: signature
+})
 
 export const addResponse = (response) => ({
     type: SignatureTypes.ADD_RESPONSE,
     payload: response
 });
 
+export const deleteAction=(id) => ({
+    type: SignatureTypes.DELETE_SIGNATURE_ACTION,
+    payload: id
+})
 
 export const loadingAction = () => ({
 
@@ -48,19 +59,25 @@ export const getAllSignaturesAction = () => (dispatch) => {
     })
 }
 
-export const addSignature = (signature) => (dispatch) => {
+export const addSignatureAction = (signature) => (dispatch) => {
     
-    dispatch(loadingAction());
+   
     return new Promise((resolve, reject) => {
   
-        API.post("https://localhost:5001/api/User/createUser",signature)
+        API.post("https://localhost:5001/api/Signature/",signature)
         .then((res) => {
-            //dispatch(loadingAction);
-            if(res.statusCode !== 200) {
-                dispatch(errorAction(res.data.errors));
-                return;
+            if(res.status==200){
+               toast.success(res.data.message);
+               console.log("add", res)
+               dispatch(addAction(res.data.data));
+             
             }
-            dispatch(errorAction(null))
+            else if(res.status==400 && res.status==404 && res.data.errors==null){
+                 toast.error(res.data)
+            }
+            
+                dispatch(addResponse(res))
+            
             resolve(res);
         }).catch((error) => {
             console.log("error"+ error);
@@ -107,7 +124,7 @@ export const updateSignatureAction = (signatureId,signature) => (dispatch) => {
 
 export const deleteSignatureAction = (signature) => (dispatch) => {
     
-     console.log("signature "+ signature);
+    
     return new Promise((resolve, reject) => {
   
         API.delete(`https://localhost:5001/api/Signature/${signature}`)
@@ -116,8 +133,10 @@ export const deleteSignatureAction = (signature) => (dispatch) => {
            
             if(res.status==200){
                 toast.success(res.data)
+                dispatch(deleteAction(signature))
+                window.location.reload()
             }
-            else if(res.status==400 && res.status==404 && res.data.errors==null){
+            else if(res.status===400 && res.status===404 && res.data.errors===null){
                  toast.error(res.data)
             }
             else{

@@ -1,10 +1,9 @@
 import { combineReducers } from "redux";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import { ocmUserReducer } from "./ocm-user/ocm-user.reducer";
 import { pdvReducer } from "./pdv/pdv.reducer";
 import { signatureReducer } from "./Signature/signature.reducer";
-
-import todosReducer from "./todos/todos.reducer";
 import userReducer from "./user/user.reducer";
 
 export const persistConfig = {
@@ -14,7 +13,8 @@ export const persistConfig = {
        
         "user",
         "pdv",
-        "signatures"
+        "signatures",
+        "ocmUsers"
     ]
 };
 
@@ -22,7 +22,8 @@ const topReducer = combineReducers({
    
     user: userReducer,
     pdv:pdvReducer,
-    signatures: signatureReducer
+    signatures: signatureReducer,
+    ocmUsers: ocmUserReducer
 });
 
 const rootReducer = (state, action) => {

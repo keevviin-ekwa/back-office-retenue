@@ -7,6 +7,7 @@ import isDev from "./process";
 const API = axios.create({
   baseURL: settings.baseUrl,
   headers: { "api-version": 1 },
+
 });
 
 API.interceptors.response.use(function (response) {

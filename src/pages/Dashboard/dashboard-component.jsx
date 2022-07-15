@@ -1,13 +1,5 @@
 import React,{useEffect} from 'react'
 import './dashboard-component.css'
-import DashboardCard from "../../components/dashbord-card/dashboard-card-component";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGraduationCap } from '@fortawesome/free-solid-svg-icons'
-import { faUser } from '@fortawesome/free-solid-svg-icons'
-import { faShop } from '@fortawesome/free-solid-svg-icons'
-import { faFileInvoice } from '@fortawesome/free-solid-svg-icons'
-
-import DashBoardPage from "../dashboard-page";
 import {Link, Outlet} from "react-router-dom";
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -15,18 +7,29 @@ import { selectUserRoles } from '../../store/reducers/user/user.selectors';
 
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
+import { getAllSignaturesAction } from '../../store/reducers/Signature/signature.actions';
+import { requestAuthentificationLogoutAsync } from '../../store/reducers/user/user.actions';
 
 
-function Dashboard({pdv,userRole}) {
+function Dashboard({pdv,userRole,getAllSignatures,doLogout}) {
      
     useEffect(() =>{
-        console.log("role",userRole[0]);
+        setTimeout(() => {
+            getAllSignatures()
+          }, 500);
     })
+
+    const handleClick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log(e);
+        doLogout();
+    }
 
     return (
         <div>
             <header className="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-                <a className="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Orange Cameroun</a>
+                <a className="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Orange Money Cameroun</a>
                 <button className="navbar-toggler position-absolute d-md-none collapsed" type="button"
                         data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -35,7 +38,7 @@ function Dashboard({pdv,userRole}) {
                 <div className="w-100"></div>
                 <div className="navbar-nav">
                     <div className="nav-item text-nowrap">
-                        <a className="nav-link px-3 btn btn-primary" href="#">Déconnexion</a>
+                        <a onClick={handleClick} className="nav-link  btn btn-primary" href="#">Déconnexion</a>
                     </div>
                 </div>
             </header>
@@ -49,7 +52,7 @@ function Dashboard({pdv,userRole}) {
                                 
                                    
                                     <li className="nav-item custom-border">
-                                    <Link to="/admin-dashboard" className="nav-link active " aria-current="page"  style={{color:"white"}}>
+                                    <Link to="/admin-dashboard" className="nav-link  " aria-current="page"  style={{color:"white"}}>
                                         <span data-feather="home"></span>
                                         Tableau de bord
                                     </Link>
@@ -104,7 +107,8 @@ const mapStateToProps = createStructuredSelector({
     });
     
     const mapDispatchToProps = (dispatch) => ({
-     
+        getAllSignatures: ()=>dispatch(getAllSignaturesAction()),
+        doLogout: ()=>dispatch(requestAuthentificationLogoutAsync())
     });
     
     export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

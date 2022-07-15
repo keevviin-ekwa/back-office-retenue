@@ -9,6 +9,7 @@ const INITIAL_STATE = {
 
 };
 
+
 export const signatureReducer =(state=INITIAL_STATE,action)=>{
     switch (action.type){
         case SignatureTypes.UPLOAD_SIGNATURE_SUCCESS:
@@ -23,6 +24,12 @@ export const signatureReducer =(state=INITIAL_STATE,action)=>{
                     error: action.payload,
                    
                 }
+        case SignatureTypes.ADD_SIGNATURE_ACTION:
+            return {
+                ...state,
+                signatures:[...state.signatures,action.payload]
+            }   
+
         case SignatureTypes.UPLOAD_SIGNATURE_LOAD:
             return  {
                 ...state,
@@ -32,6 +39,12 @@ export const signatureReducer =(state=INITIAL_STATE,action)=>{
             return {
                 ...state,
                 response: action.payload
+            }  
+            
+        case SignatureTypes.DELETE_SIGNATURE_ACTION:
+            return{
+                ...state,
+                signatures: state.signatures.filter((sign)=> sign.id === action.payload)
             }    
 
         default:

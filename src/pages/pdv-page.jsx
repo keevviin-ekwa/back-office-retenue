@@ -1,40 +1,105 @@
 import React, {Component, useEffect, useState} from 'react';
+import ReactPaginate from "react-paginate";
+
 import DashboardCard from "../components/dashbord-card/dashboard-card-component";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFileImport, faAdd, faUser} from "@fortawesome/free-solid-svg-icons";
 import CustomInput from "../components/inputs/custom-input";
 import AddPdvForm from '../components/AddPdvForm/AddPdvForm';
-import DataTable from '../components/datatable/DataTable';
 import { connect } from 'react-redux';
 import { selectPdvList } from '../store/reducers/pdv/pdv.selector';
 import { getAllPdvAction } from '../store/reducers/pdv/pdv.actions';
 import { createStructuredSelector } from 'reselect';
+import DataTable from './../components/Tables/DataTable/DataTable.ui';
+
+
+
+
 
 function PdvPage({pdv,getAllPdv}) {
-           
-    useEffect(() => {
-       
+
+    const [state, setState] = useState({
+        maxPerPage: 10,
+        offset: 1,
+        pageCount: 0,
+      });
+
+
+      useEffect(() => {
+        getAsync(state.maxPerPage, state.offset);
+  }, []);
+
+  useEffect(() => {
+      getAsync(state.maxPerPage, state.offset);
+  }, [state.maxPerPage, state.offset]);
+
+    const getAsync = (maxPerPage, offset) => {
         setTimeout(() => {
-            getAllPdv();
-        }, 500);
+             getAllPdv(maxPerPage, offset)
+             .then((res) => {
+                console.log("resp**",res);
+                setState({
+                    ...state,
+                    pageCount: Math.ceil(res.data.totalRecords/maxPerPage)
+                })
+             });
+     }, 500);
+    }
+           
+    // useEffect(() => {
+     
+    //     setTimeout(() => {
+    //         getAllPdv();
+    //     }, 500);
        
-      },[])
+    //   },[])
+
+    const handlePageClick = (data) => {
+        let selected = data.selected;
+        console.log("selected",selected);
+        setState({ ...state, offset: selected + 1 });
+    };
+
+
+      const appHeaders = [
+            {
+                id: "companyName",
+                name: "Raison sociale",
+            },
+            {
+                id: "niu",
+                name: "NIU" 
+            },
+            {
+                id: "regime",
+                name: "Regime"
+            },
+            {
+                id: "phoneNumber",
+                name: "Numéro de telephone"
+            },
+        ]; 
+
+        const actions = [
+        {
+            isVisible: (item) => true,
+            label: "Editer",
+            action: (e, item) => { e.preventDefault(); console.log(item) }
+        },
+        {
+            isVisible: (item) => true,
+            label: "Supprimer",
+            action: (e, item) => { e.preventDefault(); console.log(item) },
+        },
+        
+        ]; 
         return (
             <div>
                 <div>
                     <div
                         className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                         <h1 className="h2">Points de vente</h1>
-                        <div className="btn-toolbar mb-2 mb-md-0">
-                            <div className="btn-group me-2">
-
-                                <button type="button" className="btn btn-sm btn-secondary">Exporter</button>
-                            </div>
-                            <button type="button" className="btn btn-sm btn-secondary dropdown-toggle">
-                                <span data-feather="calendar"></span>
-                                Cette semaine
-                            </button>
-                        </div>
+                     
                     </div>
 
 
@@ -81,8 +146,44 @@ function PdvPage({pdv,getAllPdv}) {
 
 
                     <div className="row mt-5 mb-5">
-                        <div className="col-md-12 card">
-                           <DataTable pdv={pdv}/>
+                        <div className="col-md-12 border-solid-1">
+                            {/* <DataTable pdv={pdv}/>   */}
+                           <DataTable
+                            data={pdv.data}
+                            headers={appHeaders}
+                            actions={actions}
+                            emptyMessage="Aucun pdv disponible"
+                          />
+
+            {state.pageCount > 1 && (
+                <div className="d-flex justify-content-end">
+                    <nav>
+                <ReactPaginate
+                    previousLabel={""}
+                    nextLabel={""}
+                    breakLabel={"..."}
+                    pageCount={state.pageCount}
+                    marginPagesDisplayed={2}
+                    pageRangeDisplayed={5}
+                    onPageChange={handlePageClick}
+                    containerClassName={"pagination"}
+                    subContainerClassName={"pages pagination"}
+                    activeClassName={"active"}
+                    pageClassName={"page-item"}
+                    pageLinkClassName={"page-link"}
+                    previousClassName={"page-item"}
+                    previousLinkClassName={"page-link"}
+                    nextClassName={"page-item"}
+                    nextLinkClassName={"page-link"}
+                    disabledClassName={"disabled"}
+                    breakClassName={"page-item"}
+                    breakLinkClassName={"page-link"}
+                />
+                </nav>
+                </div>
+            )}
+
+                          
                         </div>
 
 
@@ -101,7 +202,7 @@ const mapStateToProps = createStructuredSelector({
     });
     
     const mapDispatchToProps = (dispatch) => ({
-      getAllPdv: () => dispatch(getAllPdvAction())
+      getAllPdv: (max,off) => dispatch(getAllPdvAction(max,off)),
     });
     
     export default connect(mapStateToProps, mapDispatchToProps)(PdvPage);
