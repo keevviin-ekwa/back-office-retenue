@@ -38,9 +38,12 @@ export default function DataTable({pdv}) {
     rows: []
   });
   useEffect(() => {
-    
-    builRow();
+
+
+
  
+    builRow();
+   
   },[])
 
   const builRow =()=>{
@@ -55,11 +58,10 @@ export default function DataTable({pdv}) {
   
 
   return <MDBDataTableV5 
-  hover entriesOptions={[5, 10, 20, 30, 40, 50]}
-   entries={5} 
-   pagesAmount={4} 
-   data={datatable} 
+ 
+  data={datatable}
+  searching={false}
+  paging={false}
    
-   searchTop 
-   searchBottom={false} />;
+    />;
 }

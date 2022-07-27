@@ -10,7 +10,7 @@ function HomePage({getAllSignatures}) {
 
   useEffect(() => {
     setTimeout(() => {
-      getAllSignatures()
+     getAllSignatures()
     }, 500);
   })
 

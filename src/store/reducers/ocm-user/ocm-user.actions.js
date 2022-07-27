@@ -2,6 +2,7 @@
 import { OcmUserTypes } from './ocm-user.type';
 import { toast } from 'react-toastify';
 import API from '../../../utils/API';
+import { base_url } from './../../../utils/routes';
 
 
 export const addOcmUserAction = (user) => (
@@ -25,7 +26,7 @@ export const getUserAction = (users) => ({
 export const getAllOcmUserAction = () => (dispatch) => {
   
     return new Promise((resolve, reject) => {
-        API.get(`https://localhost:5001/api/User/get/ocm/user`)
+        API.get(`${base_url}/api/User/get/ocm/user`)
         .then((res) => {
             if(res.status===200){
                 toast.success(res.data)
@@ -41,7 +42,7 @@ export const getAllOcmUserAction = () => (dispatch) => {
         }).catch((error) => {
             console.log(error);
           
-            toast.error(error.message);
+            //toast.error(error.message);
             reject(error);
         });
     })}

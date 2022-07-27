@@ -16,6 +16,18 @@ export const pdvReducer =(state=INITIAL_STATE,action)=>{
                 ...state,
                 pdv:action.payload
             }
+        case PdvTypes.MODIFY_PDV:
+            return{
+                ...state,
+                pdv: state.pdv.map((_pdv)=>{
+                    if(_pdv.id === action.payload.id) {
+                        return{
+                            ..._pdv,
+                            niu:action.payload.niu,
+                            regime:action.payload.regime
+                        }
+                    }})
+            }    
         case PdvTypes.ERROR_ACTION_PDV:
                 return  {
                     ...state,

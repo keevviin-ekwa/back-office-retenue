@@ -1,6 +1,7 @@
 import API from "../../../utils/API";
 import { PdvTypes } from "./pdv.types";
 import { toast } from "react-toastify";
+import { base_url } from "../../../utils/routes";
 
 
 export const modifyPdvAction = (pdv) => ({
@@ -39,7 +40,7 @@ export const errorAction = (error) => ({
 export const getAllPdvAction = (maxPerPage, offset) => (dispatch) => {
     dispatch(loadingAction());
     return new Promise((resolve, reject) => {
-        API.get(`https://localhost:5001/api/User/getAllUser?PageNumber=${offset}&PageSize=${maxPerPage}`)
+        API.get(`${base_url}/User/getAllUser?PageNumber=${offset}&PageSize=${maxPerPage}`)
         .then((res) => {
          
             dispatch(loadingAction);
@@ -60,7 +61,7 @@ export const addPdvAction = (pdv) => (dispatch) => {
     
     return new Promise((resolve, reject) => {
   
-        API.post("https://localhost:5001/api/User/createUser",pdv)
+        API.post(`${base_url}/User/createUser`,pdv)
         .then((res) => {
         
             if(res.status==200){
@@ -86,7 +87,29 @@ export const addPdvAction = (pdv) => (dispatch) => {
         });
     })
 }
-
+ export const updatePdvActionAsync = (id,pdv) =>(dispatch)=> {
+    return new Promise((resolve, reject) => {
+            API.put(`${base_url}/User/update-user/${id}`,pdv)
+            .then((res) =>{
+                if(res.status===200){
+                    toast.success(res.data.message)
+                  //  dispatch(modifyPdvAction(res.data.data))
+                    dispatch(addPdvResponseAction(res))
+                }
+                else if(res.status === 400 && res.data.errors === null){
+                     toast.error(res.data)
+                     dispatch(addPdvResponseAction(res))
+                }
+                else{
+                    dispatch(addPdvResponseAction(res))
+                }
+                resolve(res);
+            })
+            .catch((err) =>{
+                reject(err);
+            }) 
+    })
+ }
 
 export const importPdvAction = (_file) => (dispatch) => {
     var formData= new FormData();
@@ -94,7 +117,7 @@ export const importPdvAction = (_file) => (dispatch) => {
         "file",_file
     )
     return new Promise((resolve, reject) => {
-        API.post("https://localhost:5001/api/User/import-user",formData)
+        API.post(`${base_url}/User/import-user`,formData)
         .then((res) => {
           
             if(res.status===200){
@@ -114,9 +137,33 @@ export const importPdvAction = (_file) => (dispatch) => {
             console.log("error"+ error);
             // dispatch(loadingAction);
             // dispatch(errorAction(error.message));
-            toast.error(error.message);
+            //toast.error(error.message);
             reject(error);
         });
     })
 }
 
+
+
+export const searchPdvAsync = (maxPerPage, offset,phoneNumber) => (dispatch) => {
+    dispatch(loadingAction());
+    const params = {
+        PageNumber: offset,
+        PageSize:maxPerPage,
+    }
+    return new Promise((resolve, reject) => {
+        API.get(`${base_url}/User/searchUser/${phoneNumber}`)
+        .then((res) => {
+         
+            dispatch(loadingAction);
+            dispatch(successAction(res.data));
+            resolve(res);
+        }).catch((error) => {
+            console.log(error);
+            dispatch(loadingAction);
+            dispatch(errorAction(error.message));
+            //toast.error(error.message);
+            reject(error);
+        });
+    })
+}

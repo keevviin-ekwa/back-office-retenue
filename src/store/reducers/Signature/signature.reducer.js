@@ -44,7 +44,7 @@ export const signatureReducer =(state=INITIAL_STATE,action)=>{
         case SignatureTypes.DELETE_SIGNATURE_ACTION:
             return{
                 ...state,
-                signatures: state.signatures.filter((sign)=> sign.id === action.payload)
+                signatures: state.signatures.filter((sign)=> sign.id !== action.payload)
             }    
 
         default:

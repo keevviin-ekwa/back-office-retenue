@@ -5,7 +5,7 @@ import settings from "../config/settings";
 import isDev from "./process";
 
 const API = axios.create({
-  baseURL: settings.baseUrl,
+  //baseURL: settings.baseUrl,
   headers: { "api-version": 1 },
 
 });

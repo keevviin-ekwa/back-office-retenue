@@ -1,6 +1,7 @@
 import API from "../../../utils/API";
 import { SignatureTypes } from "./signature.types";
 import { toast } from "react-toastify";
+import { base_url } from './../../../utils/routes';
 
 
 
@@ -44,10 +45,16 @@ export const errorAction = (error) => ({
 export const getAllSignaturesAction = () => (dispatch) => {
     dispatch(loadingAction());
     return new Promise((resolve, reject) => {
-        API.get(`https://localhost:5001/api/Signature`)
-        .then((res) => {
-            dispatch(loadingAction);
-            dispatch(successAction(res.data));
+        API.get(`${base_url}/Signature`)
+            .then((res) => {
+            console.log(res)
+                if (res.status === 200) {
+                    dispatch(successAction(res.data));
+                }
+                if (res.status === 400) {
+                    toast.error(res.data)
+                }
+           
             resolve(res);
         }).catch((error) => {
             console.log(error);
@@ -64,11 +71,11 @@ export const addSignatureAction = (signature) => (dispatch) => {
    
     return new Promise((resolve, reject) => {
   
-        API.post("https://localhost:5001/api/Signature/",signature)
+        API.post(`${base_url}/Signature/`,signature)
         .then((res) => {
             if(res.status==200){
                toast.success(res.data.message);
-               console.log("add", res)
+               console.log("add", res.data)
                dispatch(addAction(res.data.data));
              
             }
@@ -92,16 +99,17 @@ export const addSignatureAction = (signature) => (dispatch) => {
 
 export const updateSignatureAction = (signatureId,signature) => (dispatch) => {
     
-    
+ 
     return new Promise((resolve, reject) => {
   
-        API.patch(`https://localhost:5001/api/Signature/${signatureId}`,signature)
+        API.patch(`${base_url}/Signature/${signatureId}`,signature)
         .then((res) => {
-            
-            if(res.status==200){
+            console.log(res)
+            if (res.status === 200) {
+                
                 toast.success(res.data)
             }
-            else if(res.status==400 && res.status==404 && res.data.errors==null){
+            else if(res.status===400 && res.status===404 && res.data.errors===null){
                  toast.error(res.data)
             }
             else{

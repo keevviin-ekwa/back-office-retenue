@@ -4,7 +4,6 @@ import {Link, Outlet} from "react-router-dom";
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectUserRoles } from '../../store/reducers/user/user.selectors';
-
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 import { getAllSignaturesAction } from '../../store/reducers/Signature/signature.actions';
@@ -42,24 +41,18 @@ function Dashboard({pdv,userRole,getAllSignatures,doLogout}) {
                     </div>
                 </div>
             </header>
-
+            
             <div className="container-fluid">
                 <div className="row">
                 <ToastContainer/>
                     <nav id="sidebarMenu" className="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
                         <div className="position-sticky pt-3">
-                            <ul className="nav flex-column">
+                            <ul className="nav flex-column  my-5">
                                 
-                                   
-                                    <li className="nav-item custom-border">
-                                    <Link to="/admin-dashboard" className="nav-link  " aria-current="page"  style={{color:"white"}}>
-                                        <span data-feather="home"></span>
-                                        Tableau de bord
-                                    </Link>
-                                </li>
+                                  
                       
                                 {
-                                    userRole[0]=="ADMINISTRATEUR" && 
+                                    // userRole[0]=="ADMINISTRATEUR" && 
                                     <li className="nav-item">
                                     <Link to="/admin-pdv" className="nav-link">
                                         <span data-feather="file"></span>
@@ -67,7 +60,7 @@ function Dashboard({pdv,userRole,getAllSignatures,doLogout}) {
                                     </Link>
                                 </li>
                                 }
-                                {
+                                {/* {
                                     userRole[0]=="ADMINISTRATEUR" &&
                                     <li className="nav-item">
                                     <Link to="/admin-user" className="nav-link" >
@@ -76,7 +69,7 @@ function Dashboard({pdv,userRole,getAllSignatures,doLogout}) {
                                     </Link>
                                 </li>
                                 
-                                }
+                                } */}
                                 
                                 <li className="nav-item">
                                     <Link to="admin-configuration" className="nav-link">

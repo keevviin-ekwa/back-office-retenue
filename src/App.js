@@ -13,6 +13,8 @@ function App({authenticated,requestAuthenticationAsync}) {
    
     requestAuthenticationAsync();
   }, [requestAuthenticationAsync]);
+
+  
   return (
     <div className="App">
       {

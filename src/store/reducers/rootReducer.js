@@ -5,6 +5,8 @@ import { ocmUserReducer } from "./ocm-user/ocm-user.reducer";
 import { pdvReducer } from "./pdv/pdv.reducer";
 import { signatureReducer } from "./Signature/signature.reducer";
 import userReducer from "./user/user.reducer";
+import { commissionReducer } from './commissions/commissions.reducer';
+
 
 export const persistConfig = {
     key: "root",
@@ -14,7 +16,8 @@ export const persistConfig = {
         "user",
         "pdv",
         "signatures",
-        "ocmUsers"
+        "ocmUsers",
+        "commissions",
     ]
 };
 
@@ -23,7 +26,8 @@ const topReducer = combineReducers({
     user: userReducer,
     pdv:pdvReducer,
     signatures: signatureReducer,
-    ocmUsers: ocmUserReducer
+    ocmUsers: ocmUserReducer,
+    commissions: commissionReducer
 });
 
 const rootReducer = (state, action) => {

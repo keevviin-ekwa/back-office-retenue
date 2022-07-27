@@ -1,4 +1,5 @@
 import React from 'react';
+import "boosted/dist/css/boosted.min.css"
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -10,6 +11,7 @@ import PdvPage from './pages/pdv-page';
 import UserPage from './pages/userpage';
 import { store, persistor } from "./store"
 import ConfigurationPage from './pages/configurationpage';
+import DetailsPage from './pages/DetailsPage';
 
 
 
@@ -31,6 +33,7 @@ root.render(
                     <Route path="admin-file" element={<FilePage />} />
                     <Route path="admin-configuration" element={<ConfigurationPage />} />
                     <Route path="create-user" element={<Create/>}/>
+                    <Route  path="admin-pdv/detail-user/:phone" element={<DetailsPage/>}/>
                 </Route>
             </Routes>
     </BrowserRouter>
